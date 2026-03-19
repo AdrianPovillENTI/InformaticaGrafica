@@ -13,10 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{552e0203-7938-4958-a71a-480ddfe5d07f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Geometry Shader">
+      <UniqueIdentifier>{40b01bf1-aa21-468d-85f4-82f882323952}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Fragment Shader">
+      <UniqueIdentifier>{78f912f0-4058-46ff-a2cb-ec326cefb57e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\Vertex Shader">
+      <UniqueIdentifier>{fa5a9323-dce1-454e-9a2e-93fc0746f352}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
       <Filter>Archivos de recursos</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="DELETEME.txt">
+      <Filter>Shaders\Vertex Shader</Filter>
+    </Text>
   </ItemGroup>
 </Project>

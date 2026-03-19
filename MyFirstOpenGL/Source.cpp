@@ -2,6 +2,10 @@
 #include <GLFW/glfw3.h>
 #include <glm.hpp>
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <math.h>
+
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 
@@ -11,6 +15,28 @@ void ResizeWindow(GLFWwindow* window, int iNewFrameBufferWidth, int iNewFrameBuf
     glViewport(0, 0, iNewFrameBufferWidth, iNewFrameBufferHeight);
 }
 
+// Retorna una string per a retrornar el shader a carregar a la GPU
+std::string LoadFile(const std::string& filePath) {
+    std::ifstream file(filePath);
+
+    std::string fileContent;
+    std::string line;
+
+    if (!file.is_open()) {
+        std::cerr << "No s'ha pogut obrir l'arxiu" << filePath << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+
+    //Llegim el fitxer i el carreguem a fileContent.
+    while (std::getline(file, line)) {
+        fileContent += line + "\n";
+    }
+
+    // Tanquem Stream de dades i retornem el contingut
+
+    file.close();
+    return fileContent;
+}
 void main()
 {
     int iFrameBufferHeight = 0;
@@ -46,11 +72,16 @@ void main()
 
     glewExperimental = GL_TRUE;
 
+
+    glEnable(GL_CULL_FACE);
+    // Per a que els triangles es vegin només per una cara.
+    glCullFace(GL_BACK);
+
     if (glewInit() == GLEW_OK) {
         // Ha furulao
 
         // Li definim el color base del buffer
-        glClearColor(1.f, 0.f, 0.f, 1.f/*vermell*/);
+        glClearColor(1.f, 1.f, 1.f, 1.f/*Blanc*/);
 
         GLuint vaoPuntos, vboPuntos;
 
@@ -68,6 +99,13 @@ void main()
 
         // Declaro puntos {x, y}
         GLfloat punto[] = { 0.f, 0.f };
+
+        int circleQuality = 30;
+
+        for (int i = 0; i < circleQuality; i += 2)
+        {
+            
+        }
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(punto), punto, GL_STATIC_DRAW);
 
@@ -99,7 +137,7 @@ void main()
             glBindVertexArray(vaoPuntos);
 
             // Dibuixo la geometria
-            glDrawArrays(GL_POINTS, 0, 1);
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
             // Desactivo VAO amb la geometria carregada
             glBindVertexArray(0);
