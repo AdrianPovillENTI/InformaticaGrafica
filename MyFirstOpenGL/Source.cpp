@@ -13,6 +13,7 @@ struct ShaderProgram {
 
     GLuint vertexShader = 0;
     GLuint geometryShader = 0;
+    GLuint fragmentShader = 0;
 };
 
 void ResizeWindow(GLFWwindow* window, int iNewFrameBufferWidth, int iNewFrameBufferHeight) {
@@ -123,10 +124,47 @@ GLuint LoadGeometryShader(const std::string& filePath) {
         std::cerr << "Se ha producido un error al cargar el GEOMETRY shader:  " << errorLog.data() << std::endl;
         std::exit(EXIT_FAILURE);
     }
-
 }
 
 
+GLuint LoadFragmentShader(const std::string& filePath) {
+
+    // Crear un vertex shader
+    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+    //Usamos la funcion creada para leer el vertex shader y almacenarlo 
+    std::string sShaderCode = Load_File(filePath);
+    const char* cShaderSource = sShaderCode.c_str();
+
+    //Vinculamos el vertex shader con su código fuente
+    glShaderSource(fragmentShader, 1, &cShaderSource, nullptr);
+
+    // Compilar el vertex shader
+    glCompileShader(fragmentShader);
+
+    // Verificar errores de compilación
+    GLint success;
+    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+
+    //Si la compilacion ha sido exitosa devolvemos el vertex shader
+    if (success) {
+        return fragmentShader;
+    }
+    else {
+
+        //Obtenemos longitud del log
+        GLint logLength;
+        glGetShaderiv(fragmentShader, GL_INFO_LOG_LENGTH, &logLength);
+
+        //Obtenemos el log
+        std::vector<GLchar> errorLog(logLength);
+        glGetShaderInfoLog(fragmentShader, logLength, nullptr, errorLog.data());
+
+        //Mostramos el log y finalizamos programa
+        std::cerr << "Se ha producido un error al cargar el GEOMETRY shader:  " << errorLog.data() << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
+}
 
 GLuint CreateProgram(const ShaderProgram& shaders) {
 
@@ -136,9 +174,12 @@ GLuint CreateProgram(const ShaderProgram& shaders) {
     //Verificar que existe un vertex shader o un geometry shader y adjuntarlo al programa
     if (shaders.vertexShader != 0)
         glAttachShader(program, shaders.vertexShader);
-    if (shaders.geometryShader != 0)
+    if (shaders.geometryShader != 0) 
         glAttachShader(program, shaders.geometryShader);
+    if (shaders.fragmentShader != 0) 
+        glAttachShader(program, shaders.fragmentShader);
 
+    
     // Linkear el programa
     glLinkProgram(program);
 
@@ -154,6 +195,8 @@ GLuint CreateProgram(const ShaderProgram& shaders) {
             glDetachShader(program, shaders.vertexShader);
         if (shaders.geometryShader != 0)
             glDetachShader(program, shaders.geometryShader);
+        if (shaders.fragmentShader != 0)
+            glDetachShader(program, shaders.fragmentShader);
 
         return program;
     }
@@ -222,6 +265,7 @@ void main()
         ShaderProgram myFirstProgram;
         myFirstProgram.vertexShader = LoadVertexShader("MyFirstVertexShader.glsl");
         myFirstProgram.geometryShader = LoadGeometryShader("MyFirstGeometryShader.glsl");
+        myFirstProgram.fragmentShader = LoadFragmentShader("MyFirstFragmentShader.glsl");
 
         //Compilar programa
         GLuint myFirstCompiledProgram;
@@ -255,7 +299,7 @@ void main()
         };
 
         //Definimos modo de dibujo para cada cara
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         glBufferData(GL_ARRAY_BUFFER, sizeof(punto), punto, GL_STATIC_DRAW);
 
@@ -275,6 +319,8 @@ void main()
 
         //Desvinculo VAO
         glBindVertexArray(0);
+
+        glUseProgram(myFirstCompiledProgram);
 
         while (!glfwWindowShouldClose(window)) {
             // Detecció de inputs
